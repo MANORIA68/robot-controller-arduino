@@ -26,7 +26,7 @@ void hoverserial_receive()
 
   if (DEBUG_RX)
   {
-    Serial.print(incomingByte);
+    Serial.print(incomingByte,HEX);
     return;
   }
 
@@ -37,6 +37,7 @@ void hoverserial_receive()
     *p++ = incomingBytePrev;
     *p++ = incomingByte;
     idx = 2;
+    Serial.println("START_FRAME");
   }
   else if (idx >= 2 && idx < sizeof(SerialFeedback))
   { // Save the new received data

@@ -5,9 +5,9 @@
 int scaling(int analogread, int analogread_value_min, int analogread_value_middle, int analogread_value_max)
 {
   int valeur_retournee;
-  int zero = 0;
-  int moyen = 512;
-  int maximum = 1023;
+  int min = -1000;
+  int moyen = 0;
+  int maximum = 1000;
   int deadzone = 30;
 
   if (analogread > analogread_value_middle - deadzone && analogread < analogread_value_middle + deadzone)
@@ -21,9 +21,9 @@ int scaling(int analogread, int analogread_value_min, int analogread_value_middl
   }
   else if (analogread < analogread_value_middle - deadzone)
   {
-    valeur_retournee = map(analogread, analogread_value_middle - deadzone, analogread_value_min, moyen, zero);
-    if (valeur_retournee < zero)
-      return zero;
+    valeur_retournee = map(analogread, analogread_value_middle - deadzone, analogread_value_min, moyen, min);
+    if (valeur_retournee < min)
+      return min;
   }
   return valeur_retournee;
 }
@@ -43,8 +43,8 @@ void read_joystick()
 
   if (correction_scale)
   {
-    joystate.speed_send = scaling(speed_read, speed_min, speed_middle, speed_max);
-    joystate.steer_send = scaling(steer_read, steer_min, steer_middle, steer_max);
+    joystate.speed_send = scaling(speed_read, joystick_speed_min, joystick_speed_middle, joystick_speed_max);
+    joystate.steer_send = scaling(steer_read, joystick_steer_min, joystick_steer_middle, joystick_steer_max);
   }
   else
   {
@@ -53,11 +53,11 @@ void read_joystick()
   }
 
   if (inverse_speed)
-    joystate.speed_send = 1023 - joystate.speed_send;
+    joystate.speed_send = - joystate.speed_send;
   if (inverse_steer)
-    joystate.steer_send = 1023 - joystate.steer_send;
+    joystate.steer_send = - joystate.steer_send;
 
-  if (serial_print)
+  if (SERIAL_DEBUG)
   {
     Serial.print(F("\t\t speed_read = "));
     Serial.print(speed_read);
@@ -128,16 +128,16 @@ void calibration_joystick(byte PIN_joystick, int &value_read_min, int &value_rea
 int calibration_auto()
 {
   Serial.println(F("\n **** keep the speed joystick in the central position ****"));
-  calibration_joystick(PIN_joystick_speed, speed_middle);
+  calibration_joystick(PIN_joystick_speed, joystick_speed_middle);
 
   Serial.println(F("\n **** keep the steer joystick in the central position ****"));
-  calibration_joystick(PIN_joystick_steer, steer_middle);
+  calibration_joystick(PIN_joystick_steer, joystick_steer_middle);
 
   Serial.println(F("\n **** move the speed joystick up and down ****"));
-  calibration_joystick(PIN_joystick_speed, speed_min, speed_max);
+  calibration_joystick(PIN_joystick_speed, joystick_speed_min, joystick_speed_max);
 
   Serial.println(F("\n **** move the steer joystick from right to left ****"));
-  calibration_joystick(PIN_joystick_steer, steer_min, steer_max);
+  calibration_joystick(PIN_joystick_steer, joystick_steer_min, joystick_steer_max);
 
   correction_scale = HIGH;
   save_eeprom();

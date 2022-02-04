@@ -12,19 +12,20 @@
 // ************************     CONSTANTES    ****************************
 // ***********************************************************************
 
-#define VERSION "1.0.1"
+#define VERSION "1.0.2"
 #define nRF_CE 9
 #define nRF_CSn 10
 
 const byte nRF_robot_address[6] = "ABcd0";
 const byte nRF_joystick_address[6] = "EFgh1";
 
-#define HOVER_SERIAL_BAUD 38400 // [-] Baud rate for HoverSerial (used to communicate with the hoverboard)
-#define SERIAL_BAUD 115200      // [-] Baud rate for built-in Serial (used for the Serial Monitor)
-#define START_FRAME 0xABCD      // [-] Start frme definition for reliable serial communication
-#define TIME_SEND 100           // [ms] Sending time interval
-#define SPEED_MAX_TEST 300      // [-] Maximum speed for testing//
-#define DEBUG_RX 0
+#define HOVER_SERIAL_BAUD 115200 // [-] Baud rate for HoverSerial (used to communicate with the hoverboard)
+#define SERIAL_BAUD 115200       // [-] Baud rate for built-in Serial (used for the Serial Monitor)
+#define START_FRAME 0xABCD       // [-] Start frme definition for reliable serial communication
+#define DEBUG_RX 1
+
+#define HOVER_SERIAL_RX_PIN A3 //ancienement 2
+#define HOVER_SERIAL_TX_PIN 4
 
 // https://github.com/EmanuelFeru/hoverboard-firmware-hack-FOC
 
@@ -66,7 +67,7 @@ const byte button_mask_start = 0x10;    /* Bouton start ou E */
 const byte button_mask_select = 0x20;   /* Bouton select ou F */
 const byte button_mask_joystick = 0x40; /* Bouton sous le stick */
 
-SoftwareSerial HoverSerial(2, 4); // RX, TX
+SoftwareSerial HoverSerial(HOVER_SERIAL_RX_PIN, HOVER_SERIAL_TX_PIN);
 
 // Global variables
 uint8_t idx = 0;        // Index for new data pointer
@@ -117,12 +118,12 @@ void setup()
   pinMode(A0, OUTPUT);
   pinMode(A1, OUTPUT);
   pinMode(A2, OUTPUT);
-  pinMode(A3, OUTPUT);
+  //pinMode(A3, OUTPUT);
 
   Serial.begin(SERIAL_BAUD);
   Serial.print(F("nRF24L01+ Robot\nVersion : "));
 
-  init_nrf(nRF_joystick_address,nRF_robot_address);
+  init_nrf(nRF_joystick_address, nRF_robot_address);
 
   HoverSerial.begin(HOVER_SERIAL_BAUD);
 
@@ -153,43 +154,45 @@ void loop()
 {
   unsigned long start_millis_loop = millis();
 
-  nrf_send_data();
-  nrf_receive_data();
+  //nrf_send_data();
 
-  Serial.print("steer = ");
-  Serial.print(joystate.axis_x);
-  Serial.print("\t\tspeed = ");
-  Serial.println(joystate.axis_y);
+  if (nrf_receive_data())
+  {
+    Serial.print("steer = ");
+    Serial.print(joystate.axis_x);
+    Serial.print("\t\tspeed = ");
+    Serial.println(joystate.axis_y);
 
-  last_joystick_time = millis();
+    int steering = deadZone(joystate.axis_x, 20);
+    int throttle = deadZone(joystate.axis_y , 20);
 
-  int steering = deadZone(joystate.axis_x - 512, 1);
-  int throttle = deadZone(joystate.axis_y - 512, 1); //anc 20
-
-  hoverserial_send(steering, throttle);
-  /*Serial.print("steering = ");
+    hoverserial_send(steering, throttle);
+    /*Serial.print("steering = ");
   Serial.print(steering);
   Serial.print("\t\tthrottle = ");
   Serial.println(throttle);*/
 
-  digitalWrite(A0, joystate.buttons & button_mask_up);
-  digitalWrite(A1, joystate.buttons & button_mask_right);
-  digitalWrite(A2, joystate.buttons & button_mask_down);
-  digitalWrite(A3, joystate.buttons & button_mask_left);
+    digitalWrite(A0, joystate.buttons & button_mask_up);
+    digitalWrite(A1, joystate.buttons & button_mask_right);
+    digitalWrite(A2, joystate.buttons & button_mask_down);
+  //digitalWrite(A3, joystate.buttons & button_mask_left);
+
+    last_joystick_time = millis();
+  }
+
 
   /* Si l'on n'a pas reçu de message de la télécommande depuis plus de 500 ms */
   if (millis() - last_joystick_time > 500)
   {
-    Serial.println("No joystick data !");
+    //Serial.println("No joystick data !");
     digitalWrite(A0, LOW);
     digitalWrite(A1, LOW);
     digitalWrite(A2, LOW);
-    digitalWrite(A3, LOW);
+    //digitalWrite(A3, LOW);
     hoverserial_send(0, 0);
-    delay(100);
   }
-  // hoverserial_receive();
-  
+ //hoverserial_receive();
+
   Serial.print(F("temp loop ="));
   Serial.println(String(millis() - start_millis_loop));
 }

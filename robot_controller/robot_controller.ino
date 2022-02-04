@@ -14,8 +14,8 @@
 // ************************     CONSTANTES    ****************************
 // ***********************************************************************
 
-#define VERSION "1.0.4"
-#define value_to_init_eeprom 144 //change this value to erase default eeprom
+#define VERSION "1.0.5"
+#define value_to_init_eeprom 154 //change this value to erase default eeprom
 #define ADDRESS_I2C_LCD 0x26
 
 #define nRF_CE 9
@@ -23,6 +23,8 @@
 
 const byte nRF_robot_address[6] = "ABcd0";
 const byte nRF_joystick_address[6] = "EFgh1";
+
+#define SERIAL_DEBUG LOW
 
 // ***********************************************************************
 // ********************     VARIABLES GLOBALES     ***********************
@@ -38,13 +40,13 @@ bool inverse_speed = LOW;
 bool inverse_steer = LOW;
 bool inverse_send_speed_steer = LOW;
 
-int speed_min;
-int speed_middle;
-int speed_max;
+int joystick_speed_min;
+int joystick_speed_middle;
+int joystick_speed_max;
 
-int steer_min;
-int steer_middle;
-int steer_max;
+int joystick_steer_min;
+int joystick_steer_middle;
+int joystick_steer_max;
 
 bool correction_scale = LOW;
 
@@ -53,7 +55,6 @@ struct joystick_state
   byte buttons;
   int steer_send;
   int speed_send;
-  int checksum;
 } joystate;
 
 int steer_read;
@@ -82,6 +83,7 @@ enum item_mode_lcd
 
 byte mode_print_lcd = JOYSTICK;
 byte last_mode_print_lcd=-1;
+static int32_t last_print_lcd_time = 0;
 
 bool connection_lcd = LOW;
 
@@ -97,6 +99,7 @@ bool connection_lcd = LOW;
 #include "config.h"
 #include "lcd.h"
 #include "nrf.h"
+#include "buzzer.h"
 
 // ***********************************************************************
 // ***********************     FUNCTION SETUP     ************************
@@ -140,12 +143,10 @@ void loop()
   serial_print_pause();
   read_joystick();
   read_button();
-  print_lcd();
-
-  joystate.checksum = joystate.buttons + joystate.steer_send + joystate.speed_send;
+  //print_lcd();
 
   nrf_send_data();
-  nrf_receive_data();
+  //nrf_receive_data();
 
   Serial.print(F("temp loop ="));
   Serial.println(String(millis() - start_millis_loop));

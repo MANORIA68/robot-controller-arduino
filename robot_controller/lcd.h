@@ -46,7 +46,7 @@ String str_lcd(int var, byte size)
   {
     for (byte i = 0; i < size - str.length(); i++)
     {
-      str+=" ";
+      str += " ";
     }
   }
   return str;
@@ -55,7 +55,7 @@ String str_lcd(int var, byte size)
 void print_lcd_joy()
 {
 
-  if (last_mode_print_lcd!=mode_print_lcd)
+  if (last_mode_print_lcd != mode_print_lcd)
   {
     lcd.clear();
     lcd.backlight();
@@ -74,19 +74,19 @@ void print_lcd_joy()
   }
 
   lcd.setCursor(7, 2);
-  lcd.print(str_lcd(speed_read,6));
+  lcd.print(str_lcd(speed_read, 6));
   lcd.setCursor(7, 3);
-  lcd.print(str_lcd(steer_read,6));
+  lcd.print(str_lcd(steer_read, 6));
 
   lcd.setCursor(14, 2);
-  lcd.print(str_lcd(joystate.speed_send,6));
+  lcd.print(str_lcd(joystate.speed_send, 6));
   lcd.setCursor(14, 3);
-  lcd.print(str_lcd(joystate.steer_send,6));
+  lcd.print(str_lcd(joystate.steer_send, 6));
 }
 void print_lcd_feedback()
 {
 
-  if (last_mode_print_lcd!=mode_print_lcd)
+  if (last_mode_print_lcd != mode_print_lcd)
   {
     lcd.clear();
     lcd.backlight();
@@ -105,26 +105,28 @@ void print_lcd_feedback()
   }
 
   lcd.setCursor(9, 1);
-  lcd.print(str_lcd(robot_feedback.speedR_meas,6));
+  lcd.print(str_lcd(robot_feedback.speedR_meas, 6));
   lcd.setCursor(16, 1);
-  lcd.print(str_lcd(robot_feedback.speedL_meas,6));
+  lcd.print(str_lcd(robot_feedback.speedL_meas, 6));
 }
 
 void print_lcd()
 {
-  switch (mode_print_lcd)
+  if (millis() - last_print_lcd_time > 150)
   {
-  case JOYSTICK:
-    print_lcd_joy();
-    break;
-  
-  case FEEDBACK:
-    print_lcd_feedback();
-    break;
+    switch (mode_print_lcd)
+    {
+    case JOYSTICK:
+      print_lcd_joy();
+      break;
 
-  default:
-    break;
+    case FEEDBACK:
+      print_lcd_feedback();
+      break;
+
+    default:
+      break;
+    }
+    last_print_lcd_time=millis();
   }
-
-
 }

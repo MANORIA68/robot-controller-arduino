@@ -6,12 +6,12 @@ void nrf_send_data()
 
   if (!nRF.write(&joystate, sizeof(struct joystick_state)))
   {
-    if (serial_print)
+    if (SERIAL_DEBUG)
       Serial.println(F("Not Ack'd from bot"));
   }
   else
   {
-    if (serial_print)
+    if (SERIAL_DEBUG)
       Serial.println(F("Ack from bot"));
   }
 }
@@ -23,9 +23,10 @@ void nrf_receive_data()
   if (nRF.available())
   {
     nRF.read(&robot_feedback, sizeof(struct feedback_data));
-    Serial.println(F("nRF available"));
+    if (SERIAL_DEBUG)
+      Serial.println(F("nRF available"));
   }
-  else
+  else if (SERIAL_DEBUG)
     Serial.println(F("nRF no available"));
 }
 

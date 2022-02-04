@@ -44,21 +44,21 @@ void read_serial()
       Serial.print(F("$6 : enable correction scale = "));
       Serial.println(correction_scale);
 
-      Serial.println(F("Reference speed :"));
+      Serial.println(F("Reference joystick speed :"));
       Serial.print(F("$7 : speed value min = "));
-      Serial.println(speed_min);
+      Serial.println(joystick_speed_min);
       Serial.print(F("$8 : speed value middle = "));
-      Serial.println(speed_middle);
+      Serial.println(joystick_speed_middle);
       Serial.print(F("$9 : speed value max = "));
-      Serial.println(speed_max);
+      Serial.println(joystick_speed_max);
 
-      Serial.println(F("Reference steer :"));
+      Serial.println(F("Reference joystick steer :"));
       Serial.print(F("$10 : steer value min = "));
-      Serial.println(steer_min);
+      Serial.println(joystick_steer_min);
       Serial.print(F("$11 : steer value middle = "));
-      Serial.println(steer_middle);
+      Serial.println(joystick_steer_middle);
       Serial.print(F("$12 : steer value max = "));
-      Serial.println(steer_max);
+      Serial.println(joystick_steer_max);
       Serial.println(F("\n"));
     }
     else if (mot_recu == "$#")
@@ -125,44 +125,44 @@ void read_serial()
       else if (mot_recu.indexOf("$7=", 0) == 0)
       {
         mot_recu.remove(0, 3);
-        speed_min = mot_recu.toInt();
+        joystick_speed_min = mot_recu.toInt();
         Serial.print(F("speed value min :"));
-        Serial.println(speed_min);
+        Serial.println(joystick_speed_min);
       }
       else if (mot_recu.indexOf("$8=", 0) == 0)
       {
         mot_recu.remove(0, 3);
-        speed_middle = mot_recu.toInt();
+        joystick_speed_middle = mot_recu.toInt();
         Serial.print(F("speed value middle :"));
-        Serial.println(speed_middle);
+        Serial.println(joystick_speed_middle);
       }
       else if (mot_recu.indexOf("$9=", 0) == 0)
       {
         mot_recu.remove(0, 3);
-        speed_max = mot_recu.toInt();
+        joystick_speed_max = mot_recu.toInt();
         Serial.print(F("speed value max :"));
-        Serial.println(speed_max);
+        Serial.println(joystick_speed_max);
       }
       else if (mot_recu.indexOf("$10=", 0) == 0)
       {
         mot_recu.remove(0, 3);
-        steer_min = mot_recu.toInt();
+        joystick_steer_min = mot_recu.toInt();
         Serial.print(F("steer value min :"));
-        Serial.println(steer_min);
+        Serial.println(joystick_steer_min);
       }
       else if (mot_recu.indexOf("$11=", 0) == 0)
       {
         mot_recu.remove(0, 4);
-        steer_middle = mot_recu.toInt();
+        joystick_steer_middle = mot_recu.toInt();
         Serial.print(F("steer value middle :"));
-        Serial.println(steer_middle);
+        Serial.println(joystick_steer_middle);
       }
       else if (mot_recu.indexOf("$12=", 0) == 0)
       {
         mot_recu.remove(0, 4);
-        steer_max = mot_recu.toInt();
+        joystick_steer_max = mot_recu.toInt();
         Serial.print(F("steer value max :"));
-        Serial.println(steer_max);
+        Serial.println(joystick_steer_max);
       }
     }
     save_eeprom();

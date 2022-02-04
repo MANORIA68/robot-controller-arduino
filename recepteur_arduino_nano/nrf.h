@@ -14,7 +14,7 @@ void nrf_send_data()
   }
 }
 
-void nrf_receive_data()
+bool nrf_receive_data()
 {
   nRF.startListening();
 
@@ -22,10 +22,12 @@ void nrf_receive_data()
   {
     nRF.read(&joystate, sizeof(struct joystick_state));
     //Serial.println(F("nRF available"));
+    return HIGH;
   }
   else
   {
     //Serial.println(F("nrf no available"));
+    return LOW;
   }
 }
 
