@@ -2,30 +2,27 @@
 // ***************************    SCALING    *****************************
 // ***********************************************************************
 
-int scaling(int analogread, int analogread_value_min, int analogread_value_middle, int analogread_value_max)
+int scaling(int analogread, int analogread_value_min, int analogread_value_middle, int analogread_value_max, int min, int maximum)
 {
-  int valeur_retournee;
-  int min = -1000;
-  int moyen = 0;
-  int maximum = 1000;
+  int return_value;
+  int middle = 0;
   int deadzone = 30;
 
-  if (analogread > analogread_value_middle - deadzone && analogread < analogread_value_middle + deadzone)
-    valeur_retournee = moyen;
+  return_value = middle;
 
-  else if (analogread > analogread_value_middle + deadzone)
+  if (analogread > analogread_value_middle + deadzone)
   {
-    valeur_retournee = map(analogread, analogread_value_middle + deadzone, analogread_value_max, moyen, maximum);
-    if (valeur_retournee > maximum)
+    return_value = map(analogread, analogread_value_middle + deadzone, analogread_value_max, middle, maximum);
+    if (return_value > maximum)
       return maximum;
   }
   else if (analogread < analogread_value_middle - deadzone)
   {
-    valeur_retournee = map(analogread, analogread_value_middle - deadzone, analogread_value_min, moyen, min);
-    if (valeur_retournee < min)
+    return_value = map(analogread, analogread_value_middle - deadzone, analogread_value_min, middle, min);
+    if (return_value < min)
       return min;
   }
-  return valeur_retournee;
+  return return_value;
 }
 
 // ***********************************************************************
@@ -43,8 +40,8 @@ void read_joystick()
 
   if (correction_scale)
   {
-    joystate.speed_send = scaling(speed_read, joystick_speed_min, joystick_speed_middle, joystick_speed_max);
-    joystate.steer_send = scaling(steer_read, joystick_steer_min, joystick_steer_middle, joystick_steer_max);
+    joystate.speed_send = scaling(speed_read, joystick_speed_min, joystick_speed_middle, joystick_speed_max, send_value_speed_min, send_value_speed_max);
+    joystate.steer_send = scaling(steer_read, joystick_steer_min, joystick_steer_middle, joystick_steer_max, send_value_steer_min, send_value_steer_max);
   }
   else
   {
@@ -53,9 +50,9 @@ void read_joystick()
   }
 
   if (inverse_speed)
-    joystate.speed_send = - joystate.speed_send;
+    joystate.speed_send = -joystate.speed_send;
   if (inverse_steer)
-    joystate.steer_send = - joystate.steer_send;
+    joystate.steer_send = -joystate.steer_send;
 
   if (SERIAL_DEBUG)
   {

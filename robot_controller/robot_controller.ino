@@ -16,7 +16,7 @@
 
 #define VERSION "1.0.5"
 #define value_to_init_eeprom 154 //change this value to erase default eeprom
-#define ADDRESS_I2C_LCD 0x26
+#define ADDRESS_I2C_LCD 0x3F
 
 #define nRF_CE 9
 #define nRF_CSn 10
@@ -47,6 +47,12 @@ int joystick_speed_max;
 int joystick_steer_min;
 int joystick_steer_middle;
 int joystick_steer_max;
+
+int send_value_steer_min;
+int send_value_steer_max;
+
+int send_value_speed_min;
+int send_value_speed_max;
 
 bool correction_scale = LOW;
 
@@ -143,11 +149,11 @@ void loop()
   serial_print_pause();
   read_joystick();
   read_button();
-  //print_lcd();
+  print_lcd();
 
   nrf_send_data();
   //nrf_receive_data();
 
-  Serial.print(F("temp loop ="));
-  Serial.println(String(millis() - start_millis_loop));
+  /*Serial.print(F("temp loop ="));
+  Serial.println(String(millis() - start_millis_loop));*/
 }

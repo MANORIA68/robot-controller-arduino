@@ -44,7 +44,7 @@ void read_serial()
       Serial.print(F("$6 : enable correction scale = "));
       Serial.println(correction_scale);
 
-      Serial.println(F("Reference joystick speed :"));
+      Serial.println(F("Analog read joystick speed :"));
       Serial.print(F("$7 : speed value min = "));
       Serial.println(joystick_speed_min);
       Serial.print(F("$8 : speed value middle = "));
@@ -52,13 +52,26 @@ void read_serial()
       Serial.print(F("$9 : speed value max = "));
       Serial.println(joystick_speed_max);
 
-      Serial.println(F("Reference joystick steer :"));
+      Serial.println(F("Analog read joystick steer :"));
       Serial.print(F("$10 : steer value min = "));
       Serial.println(joystick_steer_min);
       Serial.print(F("$11 : steer value middle = "));
       Serial.println(joystick_steer_middle);
       Serial.print(F("$12 : steer value max = "));
       Serial.println(joystick_steer_max);
+
+      Serial.println(F("Send value Speed :"));
+      Serial.print(F("$13 : send speed min = "));
+      Serial.println(send_value_steer_min);
+      Serial.print(F("$14 : send speed max = "));
+      Serial.println(send_value_steer_max);
+
+      Serial.println(F("Send value Steer :"));
+      Serial.print(F("$15 : send steer min = "));
+      Serial.println(send_value_speed_min);
+      Serial.print(F("$16 : send steer max = "));
+      Serial.println(send_value_speed_max);
+
       Serial.println(F("\n"));
     }
     else if (mot_recu == "$#")
@@ -163,6 +176,34 @@ void read_serial()
         joystick_steer_max = mot_recu.toInt();
         Serial.print(F("steer value max :"));
         Serial.println(joystick_steer_max);
+      }
+      else if (mot_recu.indexOf("$13=", 0) == 0)
+      {
+        mot_recu.remove(0, 4);
+        send_value_speed_min = mot_recu.toInt();
+        Serial.print(F("send value speed min :"));
+        Serial.println(send_value_speed_min);
+      }
+      else if (mot_recu.indexOf("$14=", 0) == 0)
+      {
+        mot_recu.remove(0, 4);
+        send_value_speed_max = mot_recu.toInt();
+        Serial.print(F("send value speed max :"));
+        Serial.println(send_value_speed_max);
+      }
+      else if (mot_recu.indexOf("$15=", 0) == 0)
+      {
+        mot_recu.remove(0, 4);
+        send_value_steer_min = mot_recu.toInt();
+        Serial.print(F("send value steer min :"));
+        Serial.println(send_value_steer_min);
+      }
+      else if (mot_recu.indexOf("$16=", 0) == 0)
+      {
+        mot_recu.remove(0, 4);
+        send_value_steer_max = mot_recu.toInt();
+        Serial.print(F("send value steer max :"));
+        Serial.println(send_value_steer_max);
       }
     }
     save_eeprom();
