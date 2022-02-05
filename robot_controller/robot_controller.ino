@@ -16,7 +16,7 @@
 
 #define VERSION "1.0.5"
 #define value_to_init_eeprom 154 //change this value to erase default eeprom
-#define ADDRESS_I2C_LCD 0x3F
+#define ADDRESS_I2C_LCD 0x26 //0x3F
 
 #define nRF_CE 9
 #define nRF_CSn 10
@@ -32,6 +32,7 @@ const byte nRF_joystick_address[6] = "EFgh1";
 
 byte PIN_joystick_speed;
 byte PIN_joystick_steer;
+byte PIN_buzzer;
 
 bool serial_print = HIGH;
 unsigned long millis_serial_pause = 0;
@@ -85,10 +86,11 @@ enum item_mode_lcd
 {
   JOYSTICK,
   FEEDBACK,
+  PINOUT,
 }; 
 
 byte mode_print_lcd = JOYSTICK;
-byte last_mode_print_lcd=-1;
+int last_mode_print_lcd=-1;
 static int32_t last_print_lcd_time = 0;
 
 bool connection_lcd = LOW;
@@ -101,9 +103,9 @@ bool connection_lcd = LOW;
 #include "util.h"
 #include "rom.h"
 #include "button.h"
+#include "lcd.h"
 #include "joystick.h"
 #include "config.h"
-#include "lcd.h"
 #include "nrf.h"
 #include "buzzer.h"
 

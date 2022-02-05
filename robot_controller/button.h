@@ -7,8 +7,12 @@
 #define button_mask_select 0x20
 #define button_mask_joystick 0x40
 
+unsigned long last_button_time = 0;
+
 void read_button()
 {
+    joystate.buttons = (~PIND >> 2) & 0x7F;
+
     if (joystate.buttons & button_mask_up)
         Serial.println(F("UP "));
     if (joystate.buttons & button_mask_right)
@@ -18,9 +22,14 @@ void read_button()
     if (joystate.buttons & button_mask_left)
     {
         Serial.println(F("LEFT "));
-        mode_print_lcd++;
-        overflow(mode_print_lcd, 0, sizeof(enum item_mode_lcd) - 1);
-        delay(200);
+
+        if (millis() - last_button_time > 400)
+        {
+            mode_print_lcd++;
+            // overflow(mode_print_lcd, 0, sizeof(enum item_mode_lcd) - 1);
+            overflow(mode_print_lcd, 0, 2);
+            last_button_time=millis();
+        }
     }
     if (joystate.buttons & button_mask_start)
         Serial.println(F("START "));

@@ -31,7 +31,6 @@ int scaling(int analogread, int analogread_value_min, int analogread_value_middl
 
 void read_joystick()
 {
-  joystate.buttons = (~PIND >> 2) & 0x7F;
   if (PINB & 0x01)
     joystate.buttons &= ~button_mask_joystick;
 
@@ -124,6 +123,9 @@ void calibration_joystick(byte PIN_joystick, int &value_read_min, int &value_rea
 
 int calibration_auto()
 {
+
+  print_lcd_cal_no_move();
+
   Serial.println(F("\n **** keep the speed joystick in the central position ****"));
   calibration_joystick(PIN_joystick_speed, joystick_speed_middle);
 
@@ -131,9 +133,11 @@ int calibration_auto()
   calibration_joystick(PIN_joystick_steer, joystick_steer_middle);
 
   Serial.println(F("\n **** move the speed joystick up and down ****"));
+  print_lcd_cal_move_speed();
   calibration_joystick(PIN_joystick_speed, joystick_speed_min, joystick_speed_max);
 
   Serial.println(F("\n **** move the steer joystick from right to left ****"));
+  print_lcd_cal_move_steer();
   calibration_joystick(PIN_joystick_steer, joystick_steer_min, joystick_steer_max);
 
   correction_scale = HIGH;
