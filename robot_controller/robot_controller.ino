@@ -154,8 +154,8 @@ void loop()
   print_lcd();
 
   nrf_send_data();
-  //nrf_receive_data();
+  nrf_receive_data();
 
-  /*Serial.print(F("temp loop ="));
-  Serial.println(String(millis() - start_millis_loop));*/
+  Serial.print(F("temp loop ="));
+  Serial.println(String(millis() - start_millis_loop));
 }

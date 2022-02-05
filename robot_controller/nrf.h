@@ -22,9 +22,12 @@ void nrf_receive_data()
 
   if (nRF.available())
   {
-    nRF.read(&robot_feedback, sizeof(struct feedback_data));
-    if (SERIAL_DEBUG)
-      Serial.println(F("nRF available"));
+    while (nRF.available())
+    {
+      nRF.read(&robot_feedback, sizeof(struct feedback_data));
+      if (SERIAL_DEBUG)
+        Serial.println(F("nRF available"));
+    }
   }
   else if (SERIAL_DEBUG)
     Serial.println(F("nRF no available"));

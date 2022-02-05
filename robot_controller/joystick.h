@@ -31,8 +31,6 @@ int scaling(int analogread, int analogread_value_min, int analogread_value_middl
 
 void read_joystick()
 {
-  if (PINB & 0x01)
-    joystate.buttons &= ~button_mask_joystick;
 
   speed_read = analogRead(PIN_joystick_speed);
   steer_read = analogRead(PIN_joystick_steer);

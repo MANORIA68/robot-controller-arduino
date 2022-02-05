@@ -191,7 +191,7 @@ void loop()
     //digitalWrite(A3, LOW);
     hoverserial_send(0, 0);
   }
- //hoverserial_receive();
+ hoverserial_receive();
 
   Serial.print(F("temp loop ="));
   Serial.println(String(millis() - start_millis_loop));

@@ -12,6 +12,8 @@ unsigned long last_button_time = 0;
 void read_button()
 {
     joystate.buttons = (~PIND >> 2) & 0x7F;
+    if (PINB & 0x01)
+        joystate.buttons &= ~button_mask_joystick;
 
     if (joystate.buttons & button_mask_up)
         Serial.println(F("UP "));
@@ -28,7 +30,7 @@ void read_button()
             mode_print_lcd++;
             // overflow(mode_print_lcd, 0, sizeof(enum item_mode_lcd) - 1);
             overflow(mode_print_lcd, 0, 2);
-            last_button_time=millis();
+            last_button_time = millis();
         }
     }
     if (joystate.buttons & button_mask_start)
